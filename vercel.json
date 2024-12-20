@@ -1,5 +1,5 @@
 {
-  "installCommand": "npm install && npx puppeteer browsers install chrome",
+  "installCommand": "npm install && npx puppeteer browsers install chrome && mkdir -p /var/task/bin",
   "builds": [
       {
           "src": "dist/main.js",
