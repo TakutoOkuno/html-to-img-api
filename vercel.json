@@ -1,20 +1,8 @@
 {
-    "functions": {
-      "api/server.js": {
-        "memory": 1024,
-        "includeFiles": "db.json"
-      }
-    },
     "rewrites": [
       {
         "source": "/(.*)",
         "destination": "dist/main.js"
       }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "dist/main.js"
-        }
     ]
   }
