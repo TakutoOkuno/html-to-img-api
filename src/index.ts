@@ -7,6 +7,12 @@ const app = express();
 const port = 3000;
 app.use(fileUpload());
 
+app.get('/', (req, res) => {
+  const message = 'Hello!';
+  console.log(message);
+  res.status(200).send(message)
+})
+
 app.post('/convert', async (req, res) => {
   if (!req.files || Object.keys(req.files).length === 0) {
     res.status(400).send('No files were uploaded.');
@@ -59,4 +65,4 @@ app.post('/convert', async (req, res) => {
   });
 });
 
-app.listen(port)
+export default app.listen(port)
