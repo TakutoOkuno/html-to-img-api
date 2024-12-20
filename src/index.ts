@@ -65,4 +65,6 @@ app.post('/convert', async (req, res) => {
   });
 });
 
-export default app.listen(port)
+app.listen(port);
+
+export default app;
