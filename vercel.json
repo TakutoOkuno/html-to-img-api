@@ -1,4 +1,12 @@
 {
+  "installCommand": "npm install && npx puppeteer browsers install chrome",
+  "builds": [
+      {
+          "src": "dist/main.js",
+          "use": "@vercel/node",
+          "config": { "includeFiles": ["dist/**"] }
+      }
+  ],
   "routes": [
       {
           "src": "/(.*)",
