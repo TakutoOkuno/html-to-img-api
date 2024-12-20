@@ -8,7 +8,6 @@ const port = 3000;
 app.use(fileUpload());
 
 app.post('/convert', async (req, res) => {
-  console.log(req)
   if (!req.files || Object.keys(req.files).length === 0) {
     res.status(400).send('No files were uploaded.');
   }
