@@ -31,9 +31,11 @@ app.post('/convert', async (req, res) => {
   }
   console.log('__dirname');
   console.log(__dirname);
-  fs.mkdir(`${__dirname}/input/`, { recursive: true }, (err: NodeJS.ErrnoException | null) => {
-    if (err) throw err;
-  });
+  if (!fs.existsSync(`${__dirname}/input/`)) {
+    fs.mkdir(`${__dirname}/input/`, { recursive: true }, (err: NodeJS.ErrnoException | null) => {
+      if (err) throw err;
+    });
+  }
   console.log('mkdir input');
   const uploadPath = `${__dirname}/input/${file.name}`;
   console.log('uploadPath');
@@ -52,9 +54,11 @@ app.post('/convert', async (req, res) => {
   const browser = await puppeteer.launch({headless: true});
   (async () => {
     console.log('puppeteer launched');
-    fs.mkdir(`${__dirname}/output/`, { recursive: true }, (err: NodeJS.ErrnoException | null) => {
-      if (err) throw err;
-    });
+    if (!fs.existsSync(`${__dirname}/output/`)) {
+      fs.mkdir(`${__dirname}/output/`, { recursive: true }, (err: NodeJS.ErrnoException | null) => {
+        if (err) throw err;
+      });
+    }
     console.log('mkdir output');
 
     const page = await browser.newPage();
