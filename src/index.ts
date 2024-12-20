@@ -6,6 +6,7 @@ import fs from "fs";
 const app = express();
 const port = 3000;
 app.use(fileUpload());
+console.log('hoge');
 
 app.get('/', (req, res) => {
   const message = 'Hello!';
