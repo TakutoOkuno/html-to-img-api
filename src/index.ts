@@ -1,5 +1,7 @@
 import express from "express";
 import fileUpload from 'express-fileupload';
+// import chrome from 'chrome-aws-lambda';
+// import puppeteer from "puppeteer-core";
 import puppeteer from "puppeteer";
 import fs from "fs";
 
@@ -52,6 +54,11 @@ app.post('/convert', async (req, res) => {
   console.log(outputImagePath);
 
   const browser = await puppeteer.launch({headless: true});
+  // const browser = await puppeteer.launch({
+  //   args: chrome.args,
+  //   executablePath: await chrome.executablePath,
+  //   headless: true
+  // });
   (async () => {
     console.log('puppeteer launched');
     if (!fs.existsSync(`${__dirname}/output/`)) {
