@@ -6,7 +6,6 @@ import fs from "fs";
 const app = express();
 const port = 3000;
 app.use(fileUpload());
-console.log('hoge');
 
 app.get('/', (req, res) => {
   const message = 'Hello!';
@@ -15,11 +14,14 @@ app.get('/', (req, res) => {
 })
 
 app.post('/convert', async (req, res) => {
+  console.log('in /convert');
   if (!req.files || Object.keys(req.files).length === 0) {
     res.status(400).send('No files were uploaded.');
   }
 
   const file = req?.files?.file;
+  console.log('file');
+  console.log(file);
   if (Array.isArray(file)) {
     res.status(400).send('Mutiple files uploads are not supported.');
     return;
@@ -27,21 +29,33 @@ app.post('/convert', async (req, res) => {
     res.status(400).send('No files were uploaded.');
     return;
   }
+  console.log('__dirname');
+  console.log(__dirname);
   fs.mkdir(`${__dirname}/input/`, { recursive: true }, (err: NodeJS.ErrnoException | null) => {
     if (err) throw err;
   });
+  console.log('mkdir input');
   const uploadPath = `${__dirname}/input/${file.name}`;
+  console.log('uploadPath');
+  console.log(uploadPath);
+
   file.mv(uploadPath, (err) => {
     if (err) return res.status(500).send(err);
   });
   const outputFileName = 'coverageReport.png';
   const outputImagePath = `${__dirname}/output/${outputFileName}`;
-  
+  console.log('outputFileName');
+  console.log(outputFileName);
+  console.log('outputImagePath');
+  console.log(outputImagePath);
+
   const browser = await puppeteer.launch({headless: true});
   (async () => {
+    console.log('puppeteer launched');
     fs.mkdir(`${__dirname}/output/`, { recursive: true }, (err: NodeJS.ErrnoException | null) => {
       if (err) throw err;
     });
+    console.log('mkdir output');
 
     const page = await browser.newPage();
     await page.goto(`file://${uploadPath}`);
