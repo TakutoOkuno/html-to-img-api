@@ -60,6 +60,12 @@ app.post('/convert', async (req, res) => {
   //   executablePath: await chrome.executablePath,
   //   headless: true
   // });
+
+  if (!fs.existsSync('/opt/chromium')) {
+    fs.mkdir('/opt/chromium', { recursive: true }, (err: NodeJS.ErrnoException | null) => {
+      if (err) throw err;
+    });
+  }
   const browser = await puppeteer.launch({
     args: chromium.args,
     executablePath: await chromium.executablePath("/opt/chromium"),
