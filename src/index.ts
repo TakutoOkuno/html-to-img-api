@@ -62,7 +62,7 @@ app.post('/convert', async (req, res) => {
   // });
   const browser = await puppeteer.launch({
     args: chromium.args,
-    executablePath: await chromium.executablePath(),
+    executablePath: await chromium.executablePath("/opt/chromium"),
     headless: true
   });
   (async () => {
