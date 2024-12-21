@@ -31,8 +31,11 @@ app.post('/convert', async (req, res) => {
     return;
   }
 
-  const inputDir = `${__dirname}/input/`;
-  const outputDir = `${__dirname}/output/`;
+  // 使用する一時ディレクトリ
+  const tmpDir = '/tmp';
+  const inputDir = `${tmpDir}/input/`;
+  const outputDir = `${tmpDir}/output/`;
+
   if (!fs.existsSync(inputDir)) {
     fs.mkdirSync(inputDir, { recursive: true });
   }
