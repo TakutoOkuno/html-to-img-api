@@ -47,5 +47,8 @@
     "url": "https://github.com/TakutoOkuno/html-to-img-api/issues"
   },
   "homepage": "https://github.com/TakutoOkuno/html-to-img-api#readme",
-  "description": ""
+  "description": "",
+  "engines": {
+    "node": "14.x"
+  }
 }
