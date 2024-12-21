@@ -39,7 +39,7 @@ app.post('/convert', async (req, res) => {
   const outputDir = `${tmpDir}/output/`;
 
   try {
-    const srcDir = path.join(__dirname, 'src', '_css');
+    const srcDir = path.join(__dirname, '_css');
     const cssDir = path.join(tmpDir, '_css');
     if (!await isCssFilesInTmpDir(cssDir)) {
       copyCssFiles(srcDir, cssDir);
