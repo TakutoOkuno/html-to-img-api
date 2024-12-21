@@ -40,9 +40,9 @@ app.post('/convert', async (req, res) => {
 
   try {
     const srcDir = path.join(__dirname, 'src', '_css');
-    const destDir = path.join(tmpDir, '_css');
-    if (await !isCssFilesInTmpDir(destDir)) {
-      copyCssFiles(srcDir, destDir);
+    const cssDir = path.join(tmpDir, '_css');
+    if (!await isCssFilesInTmpDir(cssDir)) {
+      copyCssFiles(srcDir, cssDir);
     }
 
     await fs.promises.mkdir(inputDir, { recursive: true });
@@ -55,7 +55,8 @@ app.post('/convert', async (req, res) => {
     const outputImagePath = `${outputDir}${outputFileName}`;
 
     const executablePath = await chromium.executablePath('https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar');
-
+    console.log(`Listing files in ${cssDir}...`);
+    listFiles(cssDir)
     // Chromiumバイナリの存在を確認
     try {
       await fs.promises.access(executablePath, fs.constants.X_OK);
@@ -91,13 +92,14 @@ app.post('/convert', async (req, res) => {
 });
 
 const copyCssFiles = async (srcDir: string, destDir: string) => {
-
   try {
+    console.log('Starting to copy CSS files...');
     // ディレクトリが存在しない場合は作成
     await fs.promises.mkdir(destDir, { recursive: true });
 
     // src からファイルを読み込む
     const files = await fs.promises.readdir(srcDir);
+    console.log(`Files in source directory (${srcDir}):`, files);
 
     // ファイルをコピー
     for (const file of files) {
@@ -105,7 +107,11 @@ const copyCssFiles = async (srcDir: string, destDir: string) => {
       const destFile = path.join(destDir, file);
 
       await fs.promises.copyFile(srcFile, destFile);
+      console.log(`Copied ${srcFile} to ${destFile}`);
     }
+    console.log('Finished copying CSS files.');
+    console.log(`Listing files in ${destDir}...3`);
+    listFiles(destDir)
   } catch (err) {
     console.error('Error copying CSS files: ', err)
   }
@@ -113,7 +119,8 @@ const copyCssFiles = async (srcDir: string, destDir: string) => {
 
 const isCssFilesInTmpDir = async (destDir: string) => {
   try {
-    await fs.promises.access(destDir, fs.constants.F_OK);
+    // ディレクトリが存在しない場合は作成
+    await fs.promises.mkdir(destDir, { recursive: true });
 
     // destDir 内が空でないか確認
     const destFiles = await fs.promises.readdir(destDir);
@@ -130,6 +137,27 @@ const isCssFilesInTmpDir = async (destDir: string) => {
       return false;
     }
   }
+}
+
+// ファイル一覧を取得する関数
+function listFiles(directory: string) {
+  fs.readdir(directory, (err, files) => {
+    if (err) {
+      return console.error('Unable to scan directory:', err);
+    }
+
+    console.log(`Files in ${directory}:`);
+    files.forEach((file) => {
+      const filePath = path.join(directory, file);
+      fs.stat(filePath, (err, stats) => {
+        if (err) {
+          return console.error('Unable to retrieve file stats:', err);
+        }
+
+        console.log(`${stats.isDirectory() ? 'Dir ' : 'File'}: ${filePath}`);
+      });
+    });
+  });
 }
 
 app.listen(port, () => {
