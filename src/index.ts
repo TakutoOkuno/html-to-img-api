@@ -47,7 +47,7 @@ app.post('/convert', async (req, res) => {
     const outputFileName = 'coverageReport.png';
     const outputImagePath = `${outputDir}${outputFileName}`;
 
-    const executablePath = await chromium.executablePath() || '/tmp/chromium';
+    const executablePath = '/tmp/chromium';
     console.log('Executable Path:', executablePath);
     
     const browser = await puppeteer.launch({
