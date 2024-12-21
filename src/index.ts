@@ -3,6 +3,7 @@ import fileUpload from 'express-fileupload';
 import chromium from '@sparticuz/chromium';
 import puppeteer from 'puppeteer-core';
 import fs from "fs";
+import path from "path";
 import util from "util";
 
 const app = express();
@@ -38,6 +39,12 @@ app.post('/convert', async (req, res) => {
   const outputDir = `${tmpDir}/output/`;
 
   try {
+    const srcDir = path.join(__dirname, 'src', '_css');
+    const destDir = path.join(tmpDir, '_css');
+    if (await !isCssFilesInTmpDir(destDir)) {
+      copyCssFiles(srcDir, destDir);
+    }
+
     await fs.promises.mkdir(inputDir, { recursive: true });
     await fs.promises.mkdir(outputDir, { recursive: true });
 
@@ -48,12 +55,10 @@ app.post('/convert', async (req, res) => {
     const outputImagePath = `${outputDir}${outputFileName}`;
 
     const executablePath = await chromium.executablePath('https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar');
-    console.log('Executable Path:', executablePath);
 
     // Chromiumバイナリの存在を確認
     try {
       await fs.promises.access(executablePath, fs.constants.X_OK);
-      console.log('Chromium executable exists and is executable');
     } catch (err) {
       console.error('Chromium executable does not exist or is not executable:', err);
     }
@@ -84,6 +89,48 @@ app.post('/convert', async (req, res) => {
     res.status(500).send('Error occurred while processing the screenshot.');
   }
 });
+
+const copyCssFiles = async (srcDir: string, destDir: string) => {
+
+  try {
+    // ディレクトリが存在しない場合は作成
+    await fs.promises.mkdir(destDir, { recursive: true });
+
+    // src からファイルを読み込む
+    const files = await fs.promises.readdir(srcDir);
+
+    // ファイルをコピー
+    for (const file of files) {
+      const srcFile = path.join(srcDir, file);
+      const destFile = path.join(destDir, file);
+
+      await fs.promises.copyFile(srcFile, destFile);
+    }
+  } catch (err) {
+    console.error('Error copying CSS files: ', err)
+  }
+}
+
+const isCssFilesInTmpDir = async (destDir: string) => {
+  try {
+    await fs.promises.access(destDir, fs.constants.F_OK);
+
+    // destDir 内が空でないか確認
+    const destFiles = await fs.promises.readdir(destDir);
+    if (destFiles.length === 0) {
+      return false;
+    } else {
+      return true;
+    }
+  } catch (err: any) { // err?.code を成立させるため any を使用する
+    if (err?.code === 'ENOENT') {
+      return false;
+    } else {
+      console.error('Error checking destination directory: ', err)
+      return false;
+    }
+  }
+}
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
