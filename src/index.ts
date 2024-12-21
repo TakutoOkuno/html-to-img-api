@@ -9,10 +9,10 @@ const app = express();
 const port = 3000;
 app.use(fileUpload());
 
-app.get('/', (req, res) => {
-  const message = 'Hello!';
-  console.log(message);
-  res.status(200).send(message);
+app.get('/', async (req, res) => {
+  const executablePath = await chromium.executablePath();
+  console.log('Executable Path:', executablePath);
+  res.status(200).send(executablePath);
 });
 
 app.post('/convert', async (req, res) => {
@@ -50,10 +50,13 @@ app.post('/convert', async (req, res) => {
     const outputFileName = 'coverageReport.png';
     const outputImagePath = `${outputDir}${outputFileName}`;
 
+    const executablePath = await chromium.executablePath();
+    console.log('Executable Path:', executablePath);
+    
     const browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
+      executablePath,
       headless: true,
     });
 
