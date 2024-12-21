@@ -47,9 +47,17 @@ app.post('/convert', async (req, res) => {
     const outputFileName = 'coverageReport.png';
     const outputImagePath = `${outputDir}${outputFileName}`;
 
-    const executablePath = '/tmp/chromium';
+    const executablePath = await chromium.executablePath('/tmp/chromium');
     console.log('Executable Path:', executablePath);
-    
+
+    // Chromiumバイナリの存在を確認
+    try {
+      await fs.promises.access(executablePath, fs.constants.X_OK);
+      console.log('Chromium executable exists and is executable');
+    } catch (err) {
+      console.error('Chromium executable does not exist or is not executable:', err);
+    }
+
     const browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
