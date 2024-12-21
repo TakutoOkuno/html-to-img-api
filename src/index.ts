@@ -9,22 +9,19 @@ const app = express();
 const port = 3000;
 app.use(fileUpload());
 
-app.get('/', async (req, res) => {
-  const executablePath = await chromium.executablePath();
-  console.log('Executable Path:', executablePath);
-  res.status(200).send(executablePath);
+app.get('/', (req, res) => {
+  const message = 'Hello!';
+  console.log(message);
+  res.status(200).send(message);
 });
 
 app.post('/convert', async (req, res) => {
-  console.log('in /convert');
   if (!req.files || Object.keys(req.files).length === 0) {
     console.error('No files were uploaded.');
     res.status(400).send('No files were uploaded.');
   }
 
   const file = req?.files?.file;
-  console.log('file');
-  console.log(file);
   if (Array.isArray(file)) {
     console.error('Multiple files uploads are not supported.');
     res.status(400).send('Multiple files uploads are not supported.');
@@ -50,7 +47,7 @@ app.post('/convert', async (req, res) => {
     const outputFileName = 'coverageReport.png';
     const outputImagePath = `${outputDir}${outputFileName}`;
 
-    const executablePath = await chromium.executablePath();
+    const executablePath = await chromium.executablePath() || '/tmp/chromium';
     console.log('Executable Path:', executablePath);
     
     const browser = await puppeteer.launch({
