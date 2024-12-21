@@ -1,6 +1,6 @@
 import express from "express";
 import fileUpload from 'express-fileupload';
-import chromium from '@sparticuz/chromium';
+import chromium from 'chrome-aws-lambda';
 import puppeteer from 'puppeteer-core';
 import fs from "fs";
 import util from "util";
@@ -47,7 +47,7 @@ app.post('/convert', async (req, res) => {
     const outputFileName = 'coverageReport.png';
     const outputImagePath = `${outputDir}${outputFileName}`;
 
-    const executablePath = await chromium.executablePath('/tmp/chromium');
+    const executablePath = await chromium.executablePath;
     console.log('Executable Path:', executablePath);
 
     // Chromiumバイナリの存在を確認
